@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20243119권아영week06</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+       
+        .calculator {
+            background: #d4d4d4;
+            border: 1px solid #aaa;
+            padding: 10px;
+        }
+       
+        .display-cell {
+            background: #fff;
+            border: 1px solid #999;
+            text-align: right;
+            padding: 4px 8px;
+            font-size: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 3px;
+        }
+
+        button {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #bbb;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            background: #e8e8e8;
+            color: #333;
+            transition: filter 0.1s;
+        }
+
+        button:active {
+            filter: brightness(0.85);
+        }
+
+        button.op {
+            background: #f0a500;
+            color: #fff;
+        }
+
+        button.special {
+            background: #d0d0d0;
+            color: #555;
+            font-weight: normal;
+        }
+
+        button.empty-btn {
+            background: #d8d8d8;
+            border-color: #ccc;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .calc-footer {
+            text-align: center;
+            padding-top: 6px;
+            font-size: 11px;
+        }
+
+        .calc-footer a {
+            color: #3366cc;
+            text-decoration: none;
+        }
+
+        .calc-footer .brand {
+            color: #555;
+        }
+
+        .calc-footer .brand span {
+            color: rgb(18, 0, 97);
+            font-weight: bold;
+        }
+
+
+        .empty      { display: none; }
+        .vertical   { display: none; }
+        .horizontal { display: none; }
+
+        
+        @media (min-width: 541px) {
+            .horizontal { display: block; }
+        }
+
+        
+        @media (max-width: 540px) and (min-width: 361px) {
+            .vertical { display: block; }
+        }
+
+        
+        @media (max-width: 360px) {
+            .empty { display: block; }
+        }
+
+        
+        .vertical .calculator   { width: 340px; }
+        .vertical .display-cell { height: 50px; font-size: 22px; }
+        .vertical table         { width: 320px; }
+        .vertical td            { width: 80px; height: 58px; }
+        .vertical button        { font-size: 17px; }
+
+        
+        .horizontal .calculator   { width: 520px; }
+        .horizontal .display-cell { height: 44px; font-size: 20px; }
+        .horizontal table         { width: 500px; }
+        .horizontal td            { width: 100px; height: 56px; }
+        .horizontal button        { font-size: 16px; }
+    </style>
+</head>
+<body>
+
+    <div class="empty">
+        <p>표시할 수 없음.</p>
+    </div>
+
+    <div class="vertical">
+        <div class="calculator">
+            <table>
+                <tr>
+                    <td colspan="4" class="display-cell">
+                        <span id="display-v">0</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><button class="empty-btn"></button></td>
+                    <td><button class="empty-btn"></button></td>
+                    <td><button class="empty-btn"></button></td>
+                    <td><button class="empty-btn"></button></td>
+
+                </tr>
+                <tr>
+                    <td><button class="special" onclick="pressCE()">CE</button></td>
+                    <td><button class="special" onclick="pressSqrt()">√x</button></td>
+                    <td><button class="special" onclick="pressPercent()">%</button></td>
+                    <td><button class="op" onclick="pressOp('÷')">÷</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="pressNum('7')">7</button></td>
+                    <td><button onclick="pressNum('8')">8</button></td>
+                    <td><button onclick="pressNum('9')">9</button></td>
+                    <td><button class="op" onclick="pressOp('×')">×</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="pressNum('4')">4</button></td>
+                    <td><button onclick="pressNum('5')">5</button></td>
+                    <td><button onclick="pressNum('6')">6</button></td>
+                    <td><button class="op" onclick="pressOp('-')">−</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="pressNum('1')">1</button></td>
+                    <td><button onclick="pressNum('2')">2</button></td>
+                    <td><button onclick="pressNum('3')">3</button></td>
+                    <td><button class="op" onclick="pressOp('+')">+</button></td>
+                </tr>
+                <tr>
+                    <td><button onclick="pressNum('0')">0</button></td>
+                    <td><button onclick="pressDot()">.</button></td>
+                    <td><button  >+/−</button></td>
+                    <td><button class="op" onclick="pressEqual()">=</button></td>
+                </tr>
+                <tr>
+                    <td><button class="special" onclick="pressPi()">π</button></td>
+                    <td><button class="special" onclick="pressSquare()">x²</button></td>
+                    <td><button class="special" onclick="pressR2()">R2</button></td>
+                    <td><button class="special" onclick="pressR0()">R0</button></td>
+                </tr>
+            </table>
+            <div class="calc-footer">
+                <a href="https://www.calculatorsoup.com/calculators/math/basic.php">Get a Widget for this Calculator</a><br>
+                <span class="brand"><span>©20243119 권아영</span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="horizontal">
+        <div class="calculator">
+            <table>
+                <tr>
+                    <td colspan="7" class="display-cell">
+                        <span id="display-h">0</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><button class="empty-btn"></button></td>
+                    <td><button class="empty-btn"></button></td>
+                    <td><button onclick="pressNum('7')">7</button></td>
+                    <td><button onclick="pressNum('8')">8</button></td>
+                    <td><button onclick="pressNum('9')">9</button></td>
+                    <td><button class="op" onclick="pressOp('÷')">÷</button></td>
+                    <td><button class="special" onclick="pressR2()">R2</button></td>
+                </tr>
+                <tr>
+                    <td><button class="empty-btn"></button></td>
+                    <td><button class="empty-btn"></button></td>
+                    <td><button onclick="pressNum('4')">4</button></td>
+                    <td><button onclick="pressNum('5')">5</button></td>
+                    <td><button onclick="pressNum('6')">6</button></td>
+                    <td><button class="op" onclick="pressOp('×')">×</button></td>
+                    <td><button class="special" onclick="pressR0()">R0</button></td>
+                </tr>
+                <tr>
+                    <td><button class="special" onclick="pressPi()">π</button></td>
+                    <td><button class="special" onclick="pressSquare()">x²</button></td>
+                    <td><button onclick="pressNum('1')">1</button></td>
+                    <td><button onclick="pressNum('2')">2</button></td>
+                    <td><button onclick="pressNum('3')">3</button></td>
+                    <td><button class="op" onclick="pressOp('-')">−</button></td>
+                    <td><button class="special" onclick="pressCE()">CE</button></td>
+                </tr>
+                <tr>
+                    <td><button class="special" onclick="pressSqrt()">√x</button></td>
+                    <td><button class="special" onclick="pressPercent()">%</button></td>
+                    <td><button onclick="pressNum('0')">0</button></td>
+                    <td><button onclick="pressDot()">.</button></td>
+                    <td><button onclick="pressSign()">+/−</button></td>
+                    <td><button class="op" onclick="pressOp('+')">+</button></td>
+                    <td><button class="op" onclick="pressEqual()">=</button></td>
+                </tr>
+            </table>
+            <div class="calc-footer">
+                <a href="https://www.calculatorsoup.com/calculators/math/basic.php">Get a Widget for this Calculator</a><br>
+                <span class="brand"><span>©20243119 권아영</span></span>
+            </div>
+        </div>
+    </div>
+    <script>
+    
+        let current    = '0';
+        let prev       = null;
+        let operator   = null;
+        let freshInput = true; 
+        let memory     = [0, 0]; 
+
+        function updateDisplay() {
+            document.getElementById('display-v').textContent = current;
+            document.getElementById('display-h').textContent = current;
+        }
+
+        function pressNum(n) {
+            if (freshInput) { current = n; freshInput = false; }
+            else { current = current === '0' ? n : current + n; }
+            updateDisplay();
+        }
+
+        function pressDot() {
+            if (freshInput) { current = '0.'; freshInput = false; }
+            else if (!current.includes('.')) { current += '.'; }
+            updateDisplay();
+        }
+
+        function pressSign() {
+            current = String(parseFloat(current) * -1);
+            updateDisplay();
+        }
+
+        function pressCE() {
+            current = '0'; freshInput = true;
+            updateDisplay();
+        }
+
+        function pressOp(op) {
+            calculate();
+            prev = parseFloat(current);
+            operator = op;
+            freshInput = true;
+        }
+
+        function pressEqual() {
+            calculate();
+            operator = null;
+            prev = null;
+            freshInput = true;
+        }
+
+        function calculate() {
+            if (operator === null || prev === null) return;
+            const a = prev;
+            const b = parseFloat(current);
+            let result;
+            switch (operator) {
+                case '+': result = a + b; break;
+                case '-': result = a - b; break;
+                case '×': result = a * b; break;
+                case '÷': result = b !== 0 ? a / b : 'Error'; break;
+                default:  result = b;
+            }
+            current = String(result);
+            updateDisplay();
+        }
+
+        function pressSqrt() {
+            const v = parseFloat(current);
+            current = v >= 0 ? String(Math.sqrt(v)) : 'Error';
+            updateDisplay();
+        }
+
+        function pressPercent() {
+            current = String(parseFloat(current) / 100);
+            updateDisplay();
+        }
+
+        function pressSquare() {
+            const v = parseFloat(current);
+            current = String(v * v);
+            updateDisplay();
+        }
+
+        function pressPi() {
+            current = String(Math.PI);
+            freshInput = false;
+            updateDisplay();
+        }
+
+        function pressR2() { memory[1] = parseFloat(current); }
+        function pressR0() { current = String(memory[0]); updateDisplay(); }
+
+        updateDisplay();
+    </script>
+</body>
+</html>

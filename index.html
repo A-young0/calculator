@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>20243119권아영week06</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+       
+        .calculator {
+            background: #d4d4d4;
+            border: 1px solid #aaa;
+            padding: 10px;
+        }
+       
+        .display-cell {
+            background: #fff;
+            border: 1px solid #999;
+            text-align: right;
+            padding: 4px 8px;
+            font-size: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+        }
+
+        td {
+            padding: 3px;
+        }
+
+        button {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #bbb;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            background: #e8e8e8;
+            color: #333;
+            transition: filter 0.1s;
+        }
+
+        button:active {
+            filter: brightness(0.85);
+        }
+
+        button.op {
+            background: #f0a500;
+            color: #fff;
+        }
+
+        button.special {
+            background: #d0d0d0;
+            color: #555;
+            font-weight: normal;
+        }
+
+        button.empty-btn {
+            background: #d8d8d8;
+            border-color: #ccc;
+            cursor: default;
+            pointer-events: none;
+        }
+
+        .calc-footer {
+            text-align: center;
+            padding-top: 6px;
+            font-size: 11px;
+        }
+
+        .calc-footer a {
+            color: #3366cc;
+            text-decoration: none;
+        }
+
+        .calc-footer .brand {
+            color: #555;
+        }
+
+        .calc-footer .brand span {
+            color: rgb(18, 0, 97);
+            font-weight: bold;
+        }
+
+
+        .empty      { display: none; }
+        .vertical   { display: none; }
+        .horizontal { display: none; }
+
+        
+        @media (min-width: 541px) {
+            .horizontal { display: block; }
+        }
+
+        
+        @media (max-width: 540px) and (min-width: 361px) {
+            .vertical { display: block; }
+        }
+
+        
+        @media (max-width: 360px) {
+            .empty { display: block; }
+        }
+
+        
+        .vertical .calculator   { width: 340px; }
+        .vertical .display-cell { height: 50px; font-size: 22px; }
+        .vertical table         { width: 320px; }
+        .vertical td            { width: 80px; height: 58px; }
+        .vertical button        { font-size: 17px; }
+
+        
+        .horizontal .calculator   { width: 520px; }
+        .horizontal .display-cell { height: 44px; font-size: 20px; }
+        .horizontal table         { width: 500px; }
+        .horizontal td            { width: 100px; height: 56px; }
+        .horizontal button        { font-size: 16px; }
+
+
+        
+
+        body.dark-mode .calculator {
+            background: #2b2d35;
+            border-color: #444854;
+        }
+
+        body.dark-mode .display-cell {
+            background: #111318;
+            border-color: #555b68;
+            color: #f1f1f1;
+        }
+
+        body.dark-mode .vertical button {
+            background: #3a3d46;
+            border-color: #555b68;
+            color: #f1f1f1;
+        }
+
+        body.dark-mode .horizontal button {
+            background: #3a3d46;
+            border-color: #555b68;
+            color: #f1f1f1;
+        }
+    
+        body.dark-mode button.op {
+            background: #c47f1a;
+            color: #fff;
+        }
+
+        body.dark-mode button.special {
+            background: #4a4e5a;
+            color: #f1f1f1;
+        }
+
+        body.dark-mode button.empty-btn {
+            background: #2f323a;
+            border-color: #444854;
+        }
+
+        body.dark-mode .calc-footer {
+            color: #d0d0d0;
+        }
+
+        body.dark-mode .calc-footer a {
+            color: #8ab4ff;
+        }
+
+        body.dark-mode .calc-footer .brand {
+            color: #cccccc;
+        }
+
+        body.dark-mode .calc-footer .brand span {
+           color: #b8a7ff;
+        }
+
+
+        .table-cell{
+            padding: 10px;
+        }
+
+        .feature-table tr:first-child {
+            background-color: #6fd8f5;
+        }
+
+
+       
+    </style>
+</head>
+<body>
+
+    <div class="empty">
+        <p>표시할 수 없음.</p>
+    </div>
+
+    <div class="vertical">
+        <div class="calculator">
+            <table>
+                <tr>
+                    <td colspan="4" class="display-cell">
+                        <span id="display-v">0</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><button class="special copy">Copy</button></td>
+                    <td><button class="special joke">?</button></td>
+                    <td><button class="special dark-btn">Dark</button></td>
+                    <td><button class="special cm-inch">cm→inch</button></td>
+                </tr>
+                <tr>
+                    <td><button class="special" id="v-ce">CE</button></td>
+                    <td><button class="special" id="v-sqrt">√x</button></td>
+                    <td><button class="special" id="v-percent">%</button></td>
+                    <td><button class="op" id="v-div">÷</button></td>
+                </tr>
+                <tr>
+                    <td><button id="v-7">7</button></td>
+                    <td><button id="v-8">8</button></td>
+                    <td><button id="v-9">9</button></td>
+                    <td><button class="op" id="v-mul">×</button></td>
+                </tr>
+                <tr>
+                    <td><button id="v-4">4</button></td>
+                    <td><button id="v-5">5</button></td>
+                    <td><button id="v-6">6</button></td>
+                    <td><button class="op" id="v-sub">−</button></td>
+                </tr>
+                <tr>
+                    <td><button id="v-1">1</button></td>
+                    <td><button id="v-2">2</button></td>
+                    <td><button id="v-3">3</button></td>
+                    <td><button class="op" id="v-add">+</button></td>
+                </tr>
+                <tr>
+                    <td><button id="v-0">0</button></td>
+                    <td><button id="v-dot">.</button></td>
+                    <td><button id="v-sign">+/−</button></td>
+                    <td><button class="op" id="v-eq">=</button></td>
+                </tr>
+                <tr>
+                    <td><button class="special" id="v-pi">π</button></td>
+                    <td><button class="special" id="v-square">x²</button></td>
+                    <td><button class="special" id="v-r2">R2</button></td>
+                    <td><button class="special" id="v-r0">R0</button></td>
+                </tr>
+            </table>
+            <div class="calc-footer">
+                <a href="https://www.calculatorsoup.com/calculators/math/basic.php">Get a Widget for this Calculator</a><br>
+                <span class="brand"><span>©20243119 권아영</span></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="horizontal">
+        <div class="calculator">
+            <table>
+                <tr>
+                    <td colspan="7" class="display-cell">
+                        <span id="display-h">0</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td><button class="special copy">Copy</button></td>
+                    <td><button class="special joke">?</button></td>
+                    <td><button id="h-7">7</button></td>
+                    <td><button id="h-8">8</button></td>
+                    <td><button id="h-9">9</button></td>
+                    <td><button class="op" id="h-div">÷</button></td>
+                    <td><button class="special" id="h-r2">R2</button></td>
+                </tr>
+                <tr>
+                    <td><button class="special dark-btn">Dark</button></td>
+                    <td><button class="special cm-inch">cm→inch</button></td>
+                    <td><button id="h-4">4</button></td>
+                    <td><button id="h-5">5</button></td>
+                    <td><button id="h-6">6</button></td>
+                    <td><button class="op" id="h-mul">×</button></td>
+                    <td><button class="special" id="h-r0">R0</button></td>
+                </tr>
+                <tr>
+                    <td><button class="special" id="h-pi">π</button></td>
+                    <td><button class="special" id="h-square">x²</button></td>
+                    <td><button id="h-1">1</button></td>
+                    <td><button id="h-2">2</button></td>
+                    <td><button id="h-3">3</button></td>
+                    <td><button class="op" id="h-sub">−</button></td>
+                    <td><button class="special" id="h-ce">CE</button></td>
+                </tr>
+                <tr>
+                    <td><button class="special" id="h-sqrt">√x</button></td>
+                    <td><button class="special" id="h-percent">%</button></td>
+                    <td><button id="h-0">0</button></td>
+                    <td><button id="h-dot">.</button></td>
+                    <td><button id="h-sign">+/−</button></td>
+                    <td><button class="op" id="h-add">+</button></td>
+                    <td><button class="op" id="h-eq">=</button></td>
+                </tr>
+            </table>
+            <div class="calc-footer">
+                <a href="https://www.calculatorsoup.com/calculators/math/basic.php">Get a Widget for this Calculator</a><br>
+                <span class="brand"><span>©20243119 권아영</span></span>
+            </div>
+        </div>
+    </div>
+    <br>
+
+    <div class="feature-table">
+        <h2>계산기 기능 소개</h2>
+        <table border="1">
+            <tr class="table-cell">
+                <th class="table-cell">버튼</th>
+                <th class="table-cell">기능 이름</th>
+                <th class="table-cell">설명</th>
+            </tr>
+            <tr class="table-cell">
+                <th class="table-cell"><button>copy</button></th>
+                <td class="table-cell">결과 복사</td>
+                <td class="table-cell">현재 계산 결과를 클립보드에 복사합니다. 버튼을 누르면 '복사됨'이라는 창이 뜨고 만약 복사되지 않는다면 '복사실패'라는 창이 뜹니다. </td>
+            </tr>
+            <tr class="table-cell">
+                <td class="table-cell"><button>?</button></td>
+                <td class="table-cell">랜덤 메시지</td>
+                <td class="table-cell">미리 설정된 4개의 문구 중 하나가 랜덤으로 1초 동안 표시됩니다. </td>
+            </tr>
+            <tr class="table-cell">
+                <td class="table-cell"><button>Dark</button></td>
+                <td class="table-cell">다크 모드</td>
+                <td class="table-cell">계산기를 포함한 사이트 전체 색상을 어두운 테마로 변경합니다.</td>
+            </tr>
+            <tr class="table-cell">
+                <td class="table-cell"><button>cm→inch</button></td>
+                <td class="table-cell">단위 변환</td>
+                <td class="table-cell">입력된 값을 cm에서 inch로 변환합니다. inch에서 cm으로 변환되지는 않습니다.</td>
+            </tr>
+        </table>
+    </div>
+
+    
+    <script>
+        let current    = '0';
+        let prev       = null;
+        let operator   = null;
+        let freshInput = true;
+        let memory     = [0, 0];
+        let jokeTimer  = null;
+
+        function updateDisplay() {
+            document.getElementById('display-v').textContent = current;
+            document.getElementById('display-h').textContent = current;
+        }
+
+        function pressNum(n) {
+            if (freshInput) { current = n; freshInput = false; }
+            else { current = current === '0' ? n : current + n; }
+            updateDisplay();
+        }
+
+        function pressDot() {
+            if (freshInput) { current = '0.'; freshInput = false; }
+            else if (!current.includes('.')) { current += '.'; }
+            updateDisplay();
+        }
+
+        function pressSign() {
+            current = String(parseFloat(current) * -1);
+            updateDisplay();
+        }
+
+        function pressCE() {
+            current = '0'; freshInput = true;
+            updateDisplay();
+        }
+
+        function pressOp(op) {
+            calculate();
+            prev = parseFloat(current);
+            operator = op;
+            freshInput = true;
+        }
+
+        function pressEqual() {
+            calculate();
+            operator = null;
+            prev = null;
+            freshInput = true;
+        }
+
+        function calculate() {
+            if (operator === null || prev === null) return;
+            const a = prev;
+            const b = parseFloat(current);
+            let result;
+            switch (operator) {
+                case '+': result = a + b; break;
+                case '-': result = a - b; break;
+                case '×': result = a * b; break;
+                case '÷': result = b !== 0 ? a / b : 'Error'; break;
+                default:  result = b;
+            }
+            current = String(result);
+            updateDisplay();
+        }
+
+        function pressSqrt() {
+            const v = parseFloat(current);
+            current = v >= 0 ? String(Math.sqrt(v)) : 'Error';
+            updateDisplay();
+        }
+
+        function pressPercent() {
+            current = String(parseFloat(current) / 100);
+            updateDisplay();
+        }
+
+        function pressSquare() {
+            const v = parseFloat(current);
+            current = String(v * v);
+            updateDisplay();
+        }
+
+        function pressPi() {
+            current = String(Math.PI);
+            freshInput = false;
+            updateDisplay();
+        }
+
+        function pressR2() { memory[1] = parseFloat(current); }
+        function pressR0() { current = String(memory[0]); updateDisplay(); }
+
+        function pressCopy() {
+            navigator.clipboard.writeText(current)
+                .then(() => {
+                    alert("복사됨!");
+                })
+                .catch(() => {
+                    alert("복사 실패");
+                });
+        }
+
+        function pressJoke() {
+            const messages = [
+                '공부하세요',
+                '과제는 끝냈나요?',
+                '계산기 쉬는 중',
+                '제 답이 과연 정확할까요?',
+                '오늘 하루도 화이팅'
+            ];
+
+            const randIndex = Math.floor(Math.random() * messages.length);
+            const msg = messages[randIndex];
+
+            if (jokeTimer !== null) {
+                clearTimeout(jokeTimer);
+            }
+
+            current = msg;
+            updateDisplay();
+
+            jokeTimer = setTimeout(() => {
+                current = '0';
+                freshInput = true;
+                updateDisplay();
+            }, 1000);
+
+            
+        }
+
+        function pressDark() {
+            document.body.classList.toggle("dark-mode");
+        }
+
+        function pressCmToInch() {
+            const value = parseFloat(current);
+
+            if (isNaN(value)) {
+                current = 'Error';
+            } else {
+                const inch = value / 2.54;
+                current = String(parseFloat(inch.toFixed(4))); // 소수점 4자리
+            }
+
+            freshInput = true;
+            updateDisplay();
+        }
+
+        
+
+        // ─── Vertical 버튼 이벤트 등록 ───────────────────────────────────────
+        // 숫자 버튼
+        ['0','1','2','3','4','5','6','7','8','9'].forEach(n => {
+            document.getElementById('v-' + n).addEventListener('click', () => pressNum(n));
+        });
+
+        // 연산자 버튼
+        document.getElementById('v-add').addEventListener('click', () => pressOp('+'));
+        document.getElementById('v-sub').addEventListener('click', () => pressOp('-'));
+        document.getElementById('v-mul').addEventListener('click', () => pressOp('×'));
+        document.getElementById('v-div').addEventListener('click', () => pressOp('÷'));
+
+        // 기능 버튼
+        document.getElementById('v-dot').addEventListener('click', pressDot);
+        document.getElementById('v-sign').addEventListener('click', pressSign);
+        document.getElementById('v-eq').addEventListener('click', pressEqual);
+        document.getElementById('v-ce').addEventListener('click', pressCE);
+        document.getElementById('v-sqrt').addEventListener('click', pressSqrt);
+        document.getElementById('v-percent').addEventListener('click', pressPercent);
+        document.getElementById('v-square').addEventListener('click', pressSquare);
+        document.getElementById('v-pi').addEventListener('click', pressPi);
+        document.getElementById('v-r2').addEventListener('click', pressR2);
+        document.getElementById('v-r0').addEventListener('click', pressR0);
+        
+        document.querySelectorAll(".copy").forEach(btn => {
+            btn.addEventListener("click", pressCopy);
+        });
+
+        document.querySelectorAll(".joke").forEach(btn => {
+            btn.addEventListener("click", pressJoke);
+        });
+
+        document.querySelectorAll(".dark-btn").forEach(btn => {
+            btn.addEventListener("click", pressDark);
+        });
+
+        document.querySelectorAll(".cm-inch").forEach(btn => {
+            btn.addEventListener("click", pressCmToInch);
+        });
+
+        // ─── Horizontal 버튼 이벤트 등록 ─────────────────────────────────────
+        // 숫자 버튼
+        ['0','1','2','3','4','5','6','7','8','9'].forEach(n => {
+            document.getElementById('h-' + n).addEventListener('click', () => pressNum(n));
+        });
+
+        // 연산자 버튼
+        document.getElementById('h-add').addEventListener('click', () => pressOp('+'));
+        document.getElementById('h-sub').addEventListener('click', () => pressOp('-'));
+        document.getElementById('h-mul').addEventListener('click', () => pressOp('×'));
+        document.getElementById('h-div').addEventListener('click', () => pressOp('÷'));
+
+        // 기능 버튼
+        document.getElementById('h-dot').addEventListener('click', pressDot);
+        document.getElementById('h-sign').addEventListener('click', pressSign);
+        document.getElementById('h-eq').addEventListener('click', pressEqual);
+        document.getElementById('h-ce').addEventListener('click', pressCE);
+        document.getElementById('h-sqrt').addEventListener('click', pressSqrt);
+        document.getElementById('h-percent').addEventListener('click', pressPercent);
+        document.getElementById('h-square').addEventListener('click', pressSquare);
+        document.getElementById('h-pi').addEventListener('click', pressPi);
+        document.getElementById('h-r2').addEventListener('click', pressR2);
+        document.getElementById('h-r0').addEventListener('click', pressR0);
+        
+
+        updateDisplay();
+    </script>
+
+</body>
+</html>
